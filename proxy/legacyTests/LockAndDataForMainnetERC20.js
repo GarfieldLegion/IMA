@@ -37,12 +37,21 @@ async function addERC20TokenByOwner(schainName, addressOfERC20OnMainnet) {
     process.exit()
 }
 
+async function sendERC20(addressOnMainnet, to, amount) {
+    const sendABI = await init.LockAndDataForMainnetERC20.methods.sendERC20(addressOnMainnet, to, amount).encodeABI();
+    const privateKeyB = Buffer.from(init.privateKeyMainnet, "hex");
+    const success = await init.sendTransaction(init.web3Mainnet, init.mainAccountMainnet, privateKeyB, sendABI, init.LockAndDataForMainnetERC20._address);
+    console.log("Transaction was successful:", success);
+}
+
 if (process.argv[2] == 'enableWhitelist') {
     enableWhitelist(process.argv[3]);
 } else if (process.argv[2] == 'disableWhitelist') {
     disableWhitelist(process.argv[3]);
 } else if (process.argv[2] == 'addERC20TokenByOwner') {
     addERC20TokenByOwner(process.argv[3], process.argv[4]);
+} else if (process.argv[2] == 'sendERC20') {
+    sendERC20(process.argv[3], process.argv[4], process.argv[5]);
 } else {
     console.log("Recheck name of function");
     process.exit();
